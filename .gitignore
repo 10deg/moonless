@@ -24,3 +24,6 @@ pnpm-debug.log*
 # editor / agent local state
 .codex/
 .claude/
+
+# local-only setup notes (never commit)
+/LOCAL_SETUP.md
