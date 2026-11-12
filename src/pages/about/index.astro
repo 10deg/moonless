@@ -1,40 +1,31 @@
 ---
-// The prose on this page is placeholder copy — rewrite it as your own. It is
-// intentionally *not* in `src/i18n/`: the dictionary holds UI chrome, so a
-// translator isn't handed someone else's biography, and you don't have to open
-// a dictionary file to edit your own about page.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { SITE } from '../../consts';
+import { withBase } from '../../lib/url';
 import { t } from '../../i18n';
 ---
 
-<BaseLayout
-  title={t('about.title')}
-  description={`About the author behind this ${SITE.title} site.`}
->
+<BaseLayout title={t('about.title')} description={`About ${SITE.author} and ${SITE.title}.`}>
   <section class="page-head section">
     <p class="eyebrow">{t('about.eyebrow')}</p>
-    <h1>A measured profile for the person behind the work.</h1>
-    <p class="lead">
-      This page is shaped for a concise biography, a working philosophy, and the handful of details
-      that help readers understand how you think.
-    </p>
+    <h1>About.</h1>
+    <p class="lead">I'm 10deg. I build small tools and write about what I learn along the way.</p>
   </section>
 
   <section class="section prose-grid">
     <div>
       <p class="eyebrow">Profile</p>
-      <h2>Quiet systems, clear writing, durable interfaces.</h2>
+      <h2>Software, notes, and quiet interfaces.</h2>
     </div>
     <div class="prose-stack">
       <p>
-        I work across product strategy, interface systems, and technical writing. The common thread
-        is structure: making complex material easier to scan, trust, and maintain.
+        I'm interested in the parts of software that are easy to overlook: how a tool feels to use,
+        how a system ages, and how writing makes both clearer.
       </p>
       <p>
-        Astro Keel leaves room for this kind of context without forcing a loud personal brand.
-        Replace this placeholder with a specific background, current role, and the constraints that
-        shape your work.
+        Moonless keeps that work in one place — project notes, short experiments, and longer pieces
+        on software. The site is deliberately small: no feed, no schedule, just things worth
+        keeping.
       </p>
     </div>
   </section>
@@ -44,21 +35,24 @@ import { t } from '../../i18n';
       <article>
         <span>01</span>
         <h3>Current focus</h3>
-        <p>Designing lean content systems, portfolio surfaces, and editorial product pages.</p>
+        <p>Building small tools, writing more regularly, and keeping this site simple.</p>
       </article>
       <article>
         <span>02</span>
         <h3>Background</h3>
-        <p>
-          Experience spanning frontend implementation, design systems, and writing for technical
-          audiences.
-        </p>
+        <p>Software development, with an interest in interfaces, tooling, and documentation.</p>
       </article>
       <article>
         <span>03</span>
         <h3>Contact</h3>
         <p>
-          Use this section for availability, collaboration preferences, or a direct contact route.
+          The best way to reach me is on
+          <a
+            class="text-link"
+            href="https://github.com/10deg"
+            target="_blank"
+            rel="noopener noreferrer">GitHub ↗</a
+          >.
         </p>
       </article>
     </div>
@@ -66,14 +60,15 @@ import { t } from '../../i18n';
 
   <section class="section prose-grid about-closing">
     <div>
-      <p class="eyebrow">Method</p>
-      <h2>Structure before surface.</h2>
+      <p class="eyebrow">Elsewhere</p>
+      <h2>Find the work.</h2>
     </div>
     <div class="prose-stack">
       <p>
-        The theme treats the page like a working document: hierarchy first, rhythm second, visual
-        signature third. Fine rules, generous spacing, and type contrast carry the identity without
-        competing with the content.
+        Browse <a class="text-link" href={withBase('/works/')}>selected projects</a> or read the{
+          ' '
+        }
+        <a class="text-link" href={withBase('/blog/')}>notes</a>.
       </p>
     </div>
   </section>

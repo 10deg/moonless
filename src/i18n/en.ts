@@ -39,22 +39,20 @@ export const en = {
   'home.primaryLinks': 'Primary links',
   'home.viewWorks': 'View works',
   'home.readNotes': 'Read notes',
-  'home.overviewLabel': 'Theme overview',
   'home.latestWorksEyebrow': 'Latest works',
   'home.allWorks': 'All works',
   'home.workTech': '{title} technology',
-  'home.worksEmpty':
-    'Add works under <code>src/content/works</code> to surface the latest projects here.',
+  'home.worksEmpty': 'Published projects will appear here.',
   'home.latestBlogEyebrow': 'Latest blog',
   'home.allPosts': 'All posts',
-  'home.postsEmpty':
-    'Add blog entries under <code>src/content/blog</code> to surface the latest notes here.',
+  'home.postsEmpty': 'Published notes will appear here.',
 
   // Blog index
   'blog.title': 'Blog',
   'blog.titlePaged': 'Blog · Page {page}',
   'blog.eyebrow': 'Blog',
   'blog.listLabel': 'Blog posts',
+  'blog.empty': 'No notes yet. New posts will appear here once published.',
   'blog.tagsEyebrow': 'Tags',
   'blog.tagsNavLabel': 'Blog tags',
 
@@ -95,6 +93,7 @@ export const en = {
   'works.title': 'Works',
   'works.eyebrow': 'Works',
   'works.listLabel': 'Selected works',
+  'works.empty': 'No projects yet. New work will appear here once published.',
   'work.eyebrow': 'Work',
   'work.visit': 'Visit project',
   'work.repository': 'View repository',
@@ -116,9 +115,9 @@ export const en = {
   'notFound.title': 'Page not found',
   'notFound.description': 'The page you were looking for does not exist.',
   'notFound.eyebrow': '404 — Not found',
-  'notFound.heading': 'This page drifted off course.',
+  'notFound.heading': 'This page does not exist.',
   'notFound.lead':
-    'The address may have moved, or it never existed. The keel lines below lead back to steady water.',
+    'The address may have changed, or it never existed. Use one of the links below to get back on track.',
   'notFound.linksLabel': 'Recovery links',
   'notFound.home': 'Back home',
   'notFound.blog': 'Read the blog',

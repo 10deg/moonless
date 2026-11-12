@@ -233,7 +233,7 @@ a:not(.brand, .button):hover {
 }
 
 .hero > * {
-  animation: keel-enter 560ms ease both;
+  animation: page-enter 560ms ease both;
 }
 
 .hero > :nth-child(2) {
@@ -258,15 +258,6 @@ a:not(.brand, .button):hover {
 }
 
 .page-head::after,
-.split-overview > div:first-child::after {
-  content: '';
-  display: block;
-  width: 4.5rem;
-  height: 1px;
-  margin-top: calc(var(--baseline) * 1.25);
-  background: var(--color-accent);
-}
-
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -371,38 +362,12 @@ p {
   font-weight: 700;
 }
 
-.split-overview,
 .prose-grid {
   display: grid;
   grid-template-columns: minmax(12rem, 0.75fr) minmax(0, 1.25fr);
   gap: clamp(2.5rem, 7vw, 6rem);
 }
 
-.feature-list {
-  display: grid;
-  gap: 1px;
-  background: var(--color-line);
-  border: var(--hairline);
-}
-
-.feature-list article {
-  min-height: 10rem;
-  padding: clamp(1.5rem, 3vw, 2.25rem);
-  background: var(--color-bg);
-  position: relative;
-}
-
-.feature-list article::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: clamp(1.5rem, 3vw, 2.25rem);
-  width: 1px;
-  height: 2.25rem;
-  background: var(--color-accent);
-}
-
-.feature-list p,
 .prose-grid p,
 .empty-state p {
   max-width: var(--prose-width);
@@ -487,6 +452,10 @@ pre code {
   grid-template-columns: minmax(11rem, 0.45fr) minmax(0, 1.55fr);
   gap: clamp(2rem, 6vw, 5rem);
   align-items: start;
+}
+
+.content-index.no-sidebar {
+  grid-template-columns: 1fr;
 }
 
 .index-sidebar,
@@ -968,7 +937,7 @@ pre code {
   color: var(--color-accent);
 }
 
-@keyframes keel-enter {
+@keyframes page-enter {
   from {
     opacity: 0;
     transform: translateY(0.75rem);
@@ -1012,7 +981,6 @@ pre code {
     height: 4rem;
   }
 
-  .split-overview,
   .prose-grid,
   .highlight-grid,
   .about-ledger,

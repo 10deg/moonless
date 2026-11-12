@@ -2,11 +2,10 @@
 // a dictionary here; `SITE.locale` in `src/consts.ts` picks which one, and also
 // drives `<html lang>`, date formatting, and the RSS feed language.
 //
-// To add a locale: copy `ja.ts`, translate the values, and register it in
+// To add a locale: copy `en.ts`, translate the values, and register it in
 // `DICTIONARIES` below. Nothing else needs editing.
 import { SITE, type NavItem } from '../consts';
 import { en, type UIKey, type UIStrings } from './en';
-import { ja } from './ja';
 
 export type { UIKey, UIStrings };
 
@@ -14,7 +13,7 @@ export type { UIKey, UIStrings };
 export const DEFAULT_LOCALE = 'en';
 
 /** Registered dictionaries, keyed by BCP 47 language tag. */
-export const DICTIONARIES: Record<string, UIStrings> = { en, ja };
+export const DICTIONARIES: Record<string, UIStrings> = { en };
 
 /** The active locale, straight from `SITE.locale`. Also the value passed to
  *  `Intl`, `<html lang>`, and the RSS `<language>` element. */
