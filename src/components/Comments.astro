@@ -84,7 +84,8 @@ const discussionsLink = `<a href="${discussionsUrl}" target="_blank" rel="noopen
 
           const config = mount.dataset;
           const fallback = mount.querySelector('[data-giscus-fallback]');
-          const themeFor = (scheme) => (scheme === 'dark' ? config.darkTheme : config.lightTheme);
+          // Both site themes are dark, so the comment widget always uses the dark palette.
+          const themeFor = () => config.darkTheme;
 
           // Long enough that a slow connection is not mistaken for a failure.
           const FALLBACK_DELAY = 8000;

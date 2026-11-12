@@ -32,11 +32,9 @@ const websiteSchema = {
 <BaseLayout description={SITE.description}>
   <StructuredData slot="head" schema={websiteSchema} />
   <section class="hero section">
-    <p class="eyebrow">Projects / notes / experiments</p>
-    <h1>Work and writing, collected in one place.</h1>
-    <p class="lead">
-      Moonless is a personal site for the things I build and the things I learn along the way.
-    </p>
+    <p class="eyebrow">{SITE.subtitle}</p>
+    <h1 class="hero-title" lang="zh-CN">无月夜</h1>
+    <p class="lead hero-note" lang="zh-CN">无月的晴夜属于星星，无月的雨夜适合思考。</p>
     <div class="action-row" aria-label={t('home.primaryLinks')}>
       <a class="button" href={withBase('/works/')}>{t('home.viewWorks')}</a>
       <a class="text-link" href={withBase('/blog/')}>{t('home.readNotes')}</a>

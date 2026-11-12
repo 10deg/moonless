@@ -10,18 +10,20 @@ export const SITE = {
    *  their own date format. Add a dictionary in `src/i18n/` to localize. */
   locale: 'en',
   /** Site name — used in the header brand, <title>, and og:site_name. */
-  title: 'Moonless',
+  title: '无月夜',
+  /** English subtitle shown under the brand and above the home page title. */
+  subtitle: 'Moonless Nights',
   /** Default meta description for pages that don't set their own. */
-  description: 'Projects, notes, and experiments from 10deg.',
+  description: '无月夜 · Moonless Nights — 星空与雨夜下的项目与笔记。',
   /** Description of the RSS feed at /rss.xml. */
-  rssDescription: 'Projects, notes, and experiments from Moonless.',
+  rssDescription: '无月夜 · Moonless Nights 的项目与笔记。',
   /** Default social share image, relative to the site root (see public/). */
   ogImage: '/og.jpg',
   /** Post author, emitted in JSON-LD BlogPosting structured data.
    *  Leave empty ('') to omit the author field. */
   author: '10deg',
   /** Footer credit line. */
-  footerText: '© 2026 Moonless',
+  footerText: '© 2026 无月夜',
 } as const;
 
 /** Icons bundled with the theme — see `src/components/SocialLinks.astro`. */

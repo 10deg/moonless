@@ -1,0 +1,248 @@
+---
+// Fixed ambient layer behind the page: a slowly twinkling, scroll-parallaxed
+// starfield for the starry theme, or a continuous diagonal drizzle for the
+// rainy-night theme. Both are drawn on one canvas so a theme switch only has to
+// change what the render loop reads.
+---
+
+<canvas id="night-sky" class="night-sky" aria-hidden="true" transition:persist="night-sky"></canvas>
+
+<script is:inline>
+  (() => {
+    const KEY = '__moonlessNightSky';
+
+    const theme = () => (document.documentElement.dataset.theme === 'rain' ? 'rain' : 'stars');
+
+    const boot = () => {
+      const canvas = document.getElementById('night-sky');
+      if (!(canvas instanceof HTMLCanvasElement)) return;
+
+      const previous = window[KEY];
+      if (previous?.canvas === canvas) {
+        // The view transition persisted the canvas; just resync after the swap.
+        previous.sync();
+        previous.start();
+        return;
+      }
+      previous?.stop?.();
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const rand = (min, max) => min + Math.random() * (max - min);
+
+      let width = 0;
+      let height = 0;
+      let scrollY = window.scrollY;
+      let stars = [];
+      let rain = [];
+      let raf = 0;
+      let lastFrame = 0;
+      let running = false;
+      let resizeTimer = 0;
+
+      const makeDrop = (initial) => ({
+        x: rand(-40, width + 80),
+        y: initial ? rand(-height, height) : rand(-80, -10),
+        length: rand(9, 22),
+        speed: rand(420, 850),
+        alpha: rand(0.08, 0.28),
+        lineWidth: rand(0.5, 1.1),
+      });
+
+      const buildStars = () => {
+        const count = Math.round(Math.min(280, Math.max(70, (width * height) / 9000)));
+        stars = Array.from({ length: count }, () => {
+          const bright = Math.random() < 0.08;
+          return {
+            x: Math.random() * width,
+            // A field taller than the viewport gives the parallax room to move.
+            y: Math.random() * height * 1.6,
+            depth: Math.random(),
+            radius: bright ? rand(1.1, 1.8) : rand(0.35, 1),
+            alpha: bright ? rand(0.75, 1) : rand(0.25, 0.75),
+            phase: Math.random() * Math.PI * 2,
+            twinkle: rand(0.3, 1.1),
+            bright,
+            warm: Math.random() < 0.12,
+          };
+        });
+      };
+
+      const buildRain = () => {
+        const count = Math.round(Math.min(200, Math.max(55, (width * height) / 9000)));
+        rain = Array.from({ length: count }, () => makeDrop(true));
+      };
+
+      const drawStars = (time) => {
+        const world = height * 1.7;
+        ctx.globalCompositeOperation = 'lighter';
+
+        for (const star of stars) {
+          // Each star moves at its own scroll speed, so the field has depth.
+          const factor = 0.06 + star.depth * 0.22;
+          let y = (star.y - scrollY * factor) % world;
+          if (y < 0) y += world;
+          const x = star.x;
+          const twinkle = reducedMotion
+            ? 0.85
+            : 0.62 + 0.38 * Math.sin(time * 0.001 * star.twinkle + star.phase);
+          const alpha = Math.max(0, star.alpha * twinkle);
+          if (alpha <= 0.01) continue;
+
+          const tint = star.warm ? '255, 238, 214' : '220, 232, 255';
+
+          if (star.bright) {
+            const flare = 3.5 + star.radius * 4.5;
+            const glow = ctx.createRadialGradient(x, y, 0, x, y, star.radius * 7);
+            glow.addColorStop(0, `rgba(${tint}, ${alpha * 0.55})`);
+            glow.addColorStop(0.35, `rgba(${tint}, ${alpha * 0.16})`);
+            glow.addColorStop(1, `rgba(${tint}, 0)`);
+            ctx.fillStyle = glow;
+            ctx.beginPath();
+            ctx.arc(x, y, star.radius * 7, 0, Math.PI * 2);
+            ctx.fill();
+
+            // A four-point cross for the handful of bright stars.
+            ctx.strokeStyle = `rgba(${tint}, ${alpha * 0.62})`;
+            ctx.lineWidth = 0.7;
+            ctx.beginPath();
+            ctx.moveTo(x - flare, y);
+            ctx.lineTo(x + flare, y);
+            ctx.moveTo(x, y - flare);
+            ctx.lineTo(x, y + flare);
+            ctx.stroke();
+          }
+
+          ctx.fillStyle = `rgba(${tint}, ${alpha})`;
+          ctx.beginPath();
+          ctx.arc(x, y, star.radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.globalCompositeOperation = 'source-over';
+      };
+
+      const drawRain = (dt) => {
+        ctx.lineCap = 'round';
+
+        for (const drop of rain) {
+          if (!reducedMotion) {
+            drop.y += drop.speed * dt;
+            drop.x -= drop.speed * 0.3 * dt;
+            if (drop.y > height + 30 || drop.x < -40) {
+              Object.assign(drop, makeDrop(false));
+            }
+          }
+
+          const tailX = drop.x - drop.length * 0.3;
+          const tailY = drop.y + drop.length;
+          ctx.strokeStyle = `rgba(196, 216, 244, ${drop.alpha})`;
+          ctx.lineWidth = drop.lineWidth;
+          ctx.beginPath();
+          ctx.moveTo(drop.x, drop.y);
+          ctx.lineTo(tailX, tailY);
+          ctx.stroke();
+        }
+      };
+
+      const draw = (time, dt) => {
+        ctx.clearRect(0, 0, width, height);
+        if (theme() === 'rain') drawRain(dt);
+        else drawStars(time);
+      };
+
+      const frame = (time) => {
+        const dt = Math.min(0.05, lastFrame ? (time - lastFrame) / 1000 : 0.016);
+        lastFrame = time;
+        draw(time, dt);
+        raf = window.requestAnimationFrame(frame);
+      };
+
+      const start = () => {
+        if (reducedMotion) {
+          draw(performance.now(), 0);
+          return;
+        }
+        if (running) return;
+        running = true;
+        lastFrame = 0;
+        raf = window.requestAnimationFrame(frame);
+      };
+
+      const stop = () => {
+        running = false;
+        if (raf) window.cancelAnimationFrame(raf);
+        raf = 0;
+      };
+
+      const resize = () => {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        buildStars();
+        buildRain();
+        draw(performance.now(), 0);
+      };
+
+      const onScroll = () => {
+        scrollY = window.scrollY;
+        // With motion reduced the loop is off, so repaint the parallax by hand.
+        if (reducedMotion) draw(performance.now(), 0);
+      };
+
+      const onResize = () => {
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(resize, 140);
+      };
+
+      const onThemeChange = () => {
+        if (reducedMotion) draw(performance.now(), 0);
+      };
+
+      const onVisibilityChange = () => {
+        if (document.hidden) stop();
+        else start();
+      };
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onResize);
+      window.addEventListener('themechange', onThemeChange);
+      document.addEventListener('visibilitychange', onVisibilityChange);
+
+      window[KEY] = {
+        canvas,
+        sync: () => {
+          scrollY = window.scrollY;
+          if (reducedMotion) draw(performance.now(), 0);
+        },
+        start,
+        stop: () => {
+          stop();
+          window.removeEventListener('scroll', onScroll);
+          window.removeEventListener('resize', onResize);
+          window.removeEventListener('themechange', onThemeChange);
+          document.removeEventListener('visibilitychange', onVisibilityChange);
+        },
+      };
+
+      resize();
+      start();
+    };
+
+    // The inline script can run again after a view transition; only wire the
+    // navigation listeners once, and let `boot` replace the canvas state.
+    if (!window.__moonlessNightSkyBooted) {
+      window.__moonlessNightSkyBooted = true;
+      document.addEventListener('astro:page-load', boot);
+    }
+
+    boot();
+  })();
+</script>

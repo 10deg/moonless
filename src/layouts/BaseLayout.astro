@@ -11,6 +11,7 @@ import { withBase } from '../lib/url';
 import { SITE, NAV_ITEMS } from '../consts';
 import { locale, navLabel, t } from '../i18n';
 import CodeCopy from '../components/CodeCopy.astro';
+import NightSky from '../components/NightSky.astro';
 import SocialLinks from '../components/SocialLinks.astro';
 
 interface Props {
@@ -39,11 +40,12 @@ const isActive = (href: string) => {
 ---
 
 <!doctype html>
-<html lang={locale}>
+<html lang={locale} data-theme="stars">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#05070f" />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
     <link rel="icon" href={withBase('/favicon.ico')} />
@@ -76,9 +78,10 @@ const isActive = (href: string) => {
       // IIFE so top-level consts can't clash if the script ever re-runs.
       (() => {
         const applyTheme = () => {
-          const storedTheme = localStorage.getItem('theme');
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          document.documentElement.dataset.theme = storedTheme || (prefersDark ? 'dark' : 'light');
+          // Both themes are dark; `rain` is the only alternative to `stars`.
+          // Older `light` / `dark` values from the template fall back to stars.
+          const stored = localStorage.getItem('theme');
+          document.documentElement.dataset.theme = stored === 'rain' ? 'rain' : 'stars';
         };
         applyTheme();
         document.addEventListener('astro:after-swap', applyTheme);
@@ -86,10 +89,18 @@ const isActive = (href: string) => {
     </script>
   </head>
   <body>
+    <NightSky />
     <header class="site-header">
       <a class="brand" href={withBase('/')} aria-label={t('nav.brandHome', { site: siteName })}>
-        <span class="brand-mark" aria-hidden="true"></span>
-        <span>{siteName}</span>
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M12 2c.7 5.4 4.6 9.3 10 10-5.4.7-9.3 4.6-10 10-.7-5.4-4.6-9.3-10-10 5.4-.7 9.3-4.6 10-10Z"
+            fill="currentColor"></path>
+        </svg>
+        <span class="brand-text">
+          <span class="brand-name">{siteName}</span>
+          <span class="brand-sub">{SITE.subtitle}</span>
+        </span>
       </a>
       <nav class="site-nav" aria-label={t('nav.label')}>
         {
@@ -100,8 +111,39 @@ const isActive = (href: string) => {
           ))
         }
       </nav>
-      <button class="theme-toggle" type="button" aria-label={t('theme.toggle')} data-theme-toggle>
-        <span aria-hidden="true"></span>
+      <button
+        class="theme-toggle"
+        type="button"
+        aria-label={t('theme.toggle')}
+        title={t('theme.toggle')}
+        data-theme-toggle
+        data-label-stars={t('theme.toStars')}
+        data-label-rain={t('theme.toRain')}
+      >
+        <svg
+          class="theme-icon theme-icon-stars"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          fill="currentColor"
+        >
+          <path
+            d="M12 2c.7 5.4 4.6 9.3 10 10-5.4.7-9.3 4.6-10 10-.7-5.4-4.6-9.3-10-10 5.4-.7 9.3-4.6 10-10Z"
+          ></path>
+        </svg>
+        <svg
+          class="theme-icon theme-icon-rain"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M7.5 15.5h9a3.5 3.5 0 0 0 .4-6.98A5 5 0 0 0 7.3 8.6 3.5 3.5 0 0 0 7.5 15.5Z"
+          ></path>
+          <path d="M8.5 18.5 7.5 21M12.5 18.5 11.5 21M16.5 18.5 15.5 21"></path>
+        </svg>
       </button>
     </header>
 
@@ -123,17 +165,47 @@ const isActive = (href: string) => {
     <CodeCopy />
 
     <script>
+      const THEME_KEY = 'theme';
+
+      const currentTheme = () =>
+        document.documentElement.dataset.theme === 'rain' ? 'rain' : 'stars';
+
+      const syncToggle = () => {
+        const theme = currentTheme();
+        const button = document.querySelector('[data-theme-toggle]');
+        if (button instanceof HTMLButtonElement) {
+          // The label describes what clicking will do next.
+          const label = theme === 'rain' ? button.dataset.labelStars : button.dataset.labelRain;
+          if (label) {
+            button.setAttribute('aria-label', label);
+            button.setAttribute('title', label);
+          }
+        }
+        document
+          .querySelector('meta[name="theme-color"]')
+          ?.setAttribute('content', theme === 'rain' ? '#0b0906' : '#05070f');
+      };
+
+      const setTheme = (nextTheme: string) => {
+        const next = nextTheme === 'rain' ? 'rain' : 'stars';
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem(THEME_KEY, next);
+        syncToggle();
+        window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: next } }));
+      };
+
       // Delegated to `document` so the handler survives view-transition swaps
       // that replace the toggle button element.
       document.addEventListener('click', (event) => {
         if (!(event.target instanceof Element) || !event.target.closest('[data-theme-toggle]')) {
           return;
         }
-        const current = document.documentElement.dataset.theme;
-        const next = current === 'dark' ? 'light' : 'dark';
-        document.documentElement.dataset.theme = next;
-        localStorage.setItem('theme', next);
+        setTheme(currentTheme() === 'rain' ? 'stars' : 'rain');
       });
+
+      document.addEventListener('astro:page-load', syncToggle);
+      document.addEventListener('astro:after-swap', syncToggle);
+      syncToggle();
     </script>
   </body>
 </html>

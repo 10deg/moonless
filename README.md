@@ -1,6 +1,6 @@
-# Moonless
+# 无月夜
 
-Projects, notes, and experiments.
+Moonless Nights — projects, notes, and experiments.
 
 <https://10deg.github.io/moonless/>
 

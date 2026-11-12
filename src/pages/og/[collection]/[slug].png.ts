@@ -40,13 +40,13 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 // Satori has no oklch() support, so these are hex equivalents of the
-// light-theme tokens in global.css.
+// starry-night tokens in global.css.
 const COLOR = {
-  bg: '#fcfcfa',
-  text: '#252831',
-  muted: '#697080',
-  line: '#dbd8d0',
-  accent: '#a8492c',
+  bg: '#070b16',
+  text: '#f3f6fc',
+  muted: '#9aa9c0',
+  line: '#26334a',
+  accent: '#a6c8ff',
 };
 
 const require = createRequire(import.meta.url);
@@ -66,8 +66,20 @@ const [fraunces, publicSans] = await Promise.all([
 const truncate = (text: string, max: number) =>
   text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
 
+// Satori only gets Latin subsets here. A Chinese title would render as empty
+// boxes, so non-Latin entries fall back to the site-wide share image instead.
+const hasNonLatin = (text: string) => /[\u3400-\u9fff\uf900-\ufaff]/.test(text);
+
 export const GET: APIRoute<OgProps> = async ({ props }) => {
   const { title, description, kind } = props;
+
+  if (hasNonLatin(title) || hasNonLatin(description)) {
+    const fallback = await readFile('public/og.jpg');
+    const png = await sharp(fallback).png().toBuffer();
+    return new Response(new Uint8Array(png), {
+      headers: { 'Content-Type': 'image/png' },
+    });
+  }
 
   const svg = await satori(
     {

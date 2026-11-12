@@ -25,7 +25,11 @@ export const en = {
   'nav.search': 'Search',
   'nav.label': 'Main navigation',
   'nav.brandHome': '{site} home',
-  'theme.toggle': 'Toggle color theme',
+  'theme.toggle': 'Switch between starry sky and rainy night',
+  'theme.stars': 'Starry sky',
+  'theme.rain': 'Rainy night',
+  'theme.toStars': 'Switch to starry sky',
+  'theme.toRain': 'Switch to rainy night',
   'footer.notes': 'Notes',
   'social.label': 'Social links',
 
