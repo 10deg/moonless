@@ -5,7 +5,8 @@ title: 'Post title'
 publishDate: 2026-01-01
 tags: []
 description: 'One sentence shown in listings, meta tags, and the RSS feed.'
-draft: true
+# Set to true to keep the post out of the site while you work on it.
+draft: false
 # Optional: add an image to src/content/blog/ and point at it here.
 # heroImage: ./hero.jpg
 ---
