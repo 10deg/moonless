@@ -10,7 +10,7 @@
   /* Starry night (default theme). */
   --color-base: #05070f;
   --color-panel: rgba(12, 19, 34, 0.78);
-  --color-panel-strong: rgba(12, 19, 34, 0.93);
+  --color-panel-strong: rgba(12, 19, 34, 0.86);
   --color-text: #f3f6fc;
   --color-muted: #9aa9c0;
   --color-line: rgba(166, 192, 230, 0.16);
@@ -41,7 +41,7 @@
   /* Rainy night: near-black with a faint warm cast from street lights. */
   --color-base: #0b0906;
   --color-panel: rgba(26, 22, 14, 0.8);
-  --color-panel-strong: rgba(26, 22, 14, 0.94);
+  --color-panel-strong: rgba(26, 22, 14, 0.88);
   --color-text: #f6f1e6;
   --color-muted: #b4ab96;
   --color-line: rgba(214, 197, 160, 0.16);
@@ -186,7 +186,7 @@ a:not(.brand, .button):hover {
 .brand-sub {
   color: var(--color-accent);
   font-family: var(--font-body);
-  font-size: 0.54rem;
+  font-size: 0.58rem;
   font-weight: 600;
   letter-spacing: 0.2em;
   line-height: 1.2;
@@ -274,7 +274,7 @@ a:not(.brand, .button):hover {
 .hero-title {
   margin-bottom: calc(var(--baseline) * 1.1);
   font-size: clamp(2.7rem, 4.8vw, 4.4rem);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   line-height: 1.04;
 }
 
